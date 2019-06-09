@@ -19,10 +19,10 @@ public:
         while(in) {
             std::string command;
             std::getline(in, command);
-            if(command.empty())
-                executeCommads();
-            else
-                addCommand(command);
+//            if(command.empty())
+//                executeCommads();
+//            else
+//                addCommand(command);
         }
     }
 
