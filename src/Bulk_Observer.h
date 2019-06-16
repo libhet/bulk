@@ -9,7 +9,7 @@ using commands_block_t = std::list<command_t>;
 
 class IBulkObserver {
 public:
-    virtual void process(const command_t& cmd) = 0;
+    virtual void process(const commands_block_t& cmd, const size_t time) = 0;
 };
 
 
@@ -23,19 +23,12 @@ class BaseBulkObservable : public IBulkObservable {
 protected:
     std::list<IBulkObserver*> m_subscribers;
 
-    void notify(const command_t& cmd) {
-        for(auto subscriber : m_subscribers)
-            subscriber->process(cmd);
-    }
+    void notify(const commands_block_t& cmd, const size_t time);
 
 public:
-    void subscribe(IBulkObserver* observer) {
-        m_subscribers.push_back(observer);
-    }
+    void subscribe(IBulkObserver* observer) override;
 
-    const std::list<IBulkObserver*>& subscribers() const {
-        return m_subscribers;
-    }
+    const std::list<IBulkObserver*>& subscribers() const;
 };
 
 #endif //BULK_BULK_OBSERVER_H
