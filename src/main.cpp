@@ -1,5 +1,8 @@
 #include <iostream>
 #include <memory>
+#include <cstdlib>
+#include <errno.h>
+#include <langinfo.h>
 
 #include "Bulk_CommandReader.h"
 #include "Bulk_Console.h"
@@ -8,17 +11,29 @@
 int main(int argc, char** argv) {
 
     if(argc != 2) {
-        std::cout << "Usage: bulk N \nWhere N is size of the block.";
+        std::cout << "Usage: bulk N \nWhere N is size of block.";
         return 0;
     }
     else {
-        auto commandReader = std::make_unique<CommandReader>(std::atoi(argv[1]), std::cin);
-        auto fileLoger     = FileLoger();
-        auto console       = Console();
+        int  base = 10;
+        char *end;
+        int  N;
 
-        commandReader->subscribe(&console);
-        commandReader->subscribe(&fileLoger);
+        N = strtoll(argv[1], &end, base);
 
-        commandReader->Process();
+        if(N <= 0) {
+            std::cout << argv[1] << " isn't a positive number." << std::endl;
+        } else if(errno == ERANGE) {
+            std::cout << "Range error!" << std::endl;
+        } else {
+            auto commandReader = std::make_unique<CommandReader>(N, std::cin);
+            auto fileLoger     = FileLoger();
+            auto console       = Console();
+
+            commandReader->subscribe(&console);
+            commandReader->subscribe(&fileLoger);
+
+            commandReader->Process();
+        }
     }
 }
